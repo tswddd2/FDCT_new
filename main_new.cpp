@@ -50,32 +50,21 @@ int main(int argc, char** argv) {
 	auto st = Now();
 
 	Tree* consensus;
-	// try 
-	// {
-		if (algo == "freq") {
-			// consensus = freqdiff(trees, Tree::get_taxas_num() > 1000);
-			consensus = freqdiff(trees);
-		} else if (algo == "minrlc_exact") {
-			consensus = minRLC_exact(trees);
-		} else if (algo == "minilc_exact") {
-			consensus = minILC_exact(trees);
-		} else if (algo == "aho-build") {
-			consensus = ahoBuild(trees);
-		} else {
-			std::cerr << "Algorithm not supported" << std::endl;
-			return 1;
-		}
-	// }
-	// catch ( exception &e ) 
-	// {
-	// 	cout << "Caught " << e.what( ) << endl;
-	// 	cout << "Type " << typeid( e ).name( ) << endl;
-	// };
+	if (algo == "freq") {
+		consensus = freqdiff(trees);
+	} else if (algo == "minrlc_exact") {
+		consensus = minRLC_exact(trees);
+	} else if (algo == "minilc_exact") {
+		consensus = minILC_exact(trees);
+	} else if (algo == "aho-build") {
+		consensus = ahoBuild(trees);
+	} else {
+		std::cerr << "Algorithm not supported" << std::endl;
+		return 1;
+	}
 
 	auto ed = Now();
-	cout << "finish\n";
 	cout << duration_sec(st, ed) << endl;
-	return 0;
 
 	if (consensus == NULL) {
 		std::cout << "No valid consensus found." << std::endl;

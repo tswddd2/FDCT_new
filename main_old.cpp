@@ -75,7 +75,6 @@ int main(int argc, char** argv) {
 
 	auto ed = Now();
 	cout << duration_sec(st, ed) << endl;
-	return 0;
 
 	if (consensus == NULL) {
 		std::cout << "No valid consensus found." << std::endl;

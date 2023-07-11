@@ -791,12 +791,12 @@ Tree* freqdiff(std::vector<Tree*>& trees, bool centroid_paths = true) {
 	auto ed = Now();
 	cout << duration_sec(st, ed) << endl;
 
-	freopen("oup2.txt", "w", stdout);
-	for (int i = 0; i < trees.size(); i++) {
-		for (int j = 0; j < trees[i]->get_nodes_num(); j++) {
-			cout << trees[i]->get_node(j)->weight << ' ';
-		} cout << '\n'; }
-	exit(0);
+	// freopen("oup2.txt", "w", stdout);
+	// for (int i = 0; i < trees.size(); i++) {
+	// 	for (int j = 0; j < trees[i]->get_nodes_num(); j++) {
+	// 		cout << trees[i]->get_node(j)->weight << ' ';
+	// 	} cout << '\n'; }
+	// exit(0);
 
 	lca_t** lca_preps = new lca_t*[trees.size()];
 	for (size_t i = 0; i < trees.size(); i++) {

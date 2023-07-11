@@ -1,8 +1,8 @@
 /*
- * freqdiff.h
+ * freqdiff2.h
  *
- *  Created on: 21 Oct 2015
- *      Author: Mesh
+ *  Created on: 2021
+ *      Author: Victor
  */
 
 #ifndef FREQDIFF_H_
@@ -1210,14 +1210,14 @@ Tree* freqdiff(std::vector<Tree*>& trees) {
 	auto ed = Now();
 	cout << duration_sec(st, ed) << endl;
 
-	freopen("oup.txt", "w", stdout);
-	for (int i = 0; i < k; i++) {
-		for (int j = 0; j < trees[i]->get_nodes_num(); j++)
-			cout << trees[i]->get_node(j)->weight << ' ';
-		cout << endl;
-	}
+	// freopen("oup.txt", "w", stdout);
+	// for (int i = 0; i < k; i++) {
+	// 	for (int j = 0; j < trees[i]->get_nodes_num(); j++)
+	// 		cout << trees[i]->get_node(j)->weight << ' ';
+	// 	cout << endl;
+	// }
 
-	exit(0);
+	// exit(0);
 
 
 
