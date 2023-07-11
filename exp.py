@@ -1,10 +1,12 @@
-import os
+import os, sys
 
 n_list = [500, 1000, 2000]
 k_list = [10]
 loop = 1
 
-path = "~/boost_1_55_0/"
+if len(sys.argv) == 2:
+    path = sys.argv[1]
+else: path = "~/boost_1_55_0/"
 
 f = open("log.txt", 'a')
 f.write("loop: {}\n".format(loop))
