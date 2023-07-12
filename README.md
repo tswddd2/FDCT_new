@@ -1,6 +1,6 @@
 # FDCT_new
 
-## Environment Setup (Linux)
+## Environment Setup
 
 Download and unzip boost 1.55 from this [link](https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download)
 
