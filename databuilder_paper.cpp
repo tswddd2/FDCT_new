@@ -14,21 +14,19 @@ using namespace std;
 int n = 100, m = 0, k = 10;
 float r = 0;
 string out_file = "inp.txt";
-bool bin = true, sim = true;
-
+bool sim = true;
+vector<int> inter;
+int dbg = 0;
 
 
 void readArg(int argc, char **argv) {
     if (argc == 1)
         return ;
-    bin = false;
     int t_opt;
-    m = -1;
+    m = -1; r = 0.2;
     while ((t_opt = getopt(argc, argv, "bn:r:m:k:o:d") ) != -1)
         switch (t_opt)
         {
-            case 'b':
-                bin = true;         break;
             case 'n':
                 n = atoi(optarg);   break;
             case 'm':
@@ -43,9 +41,7 @@ void readArg(int argc, char **argv) {
                 sim = false;         break;
         }
     if (m == -1 && sim)
-        m = max(20, n / 30);
-    if (bin)
-        r = 0;
+        m = max(20, n/20);
 }
 
 struct TreeNode
@@ -94,42 +90,24 @@ class Tree
         return F(now);
     }
 
-    TreeNode* remove_subtree(TreeNode* now) {
+    void remove_subtree(TreeNode* now) {
         vector<TreeNode*>::iterator it;
         for (it = S(F(now)).begin(); it != S(F(now)).end(); it++)
             if (*it == now) {
                 S(F(now)).erase(it);
                 break;
             }
-
-        if (S(F(now)).size() > 1)
-            return F(now);
-        else
-            return remove_node(F(now));
     }
 
-    void add_subtree_bin(TreeNode* now, TreeNode* father) {
-        TreeNode* son = S(father)[0], *inter;
-        S(father).erase(S(father).begin());
-        inter = add_node(father);
-        S(inter).push_back(son);
-        S(inter).push_back(now);
-        F(son) = F(now) = inter;
-    }
-
-    void add_subtree(TreeNode* now, TreeNode* father, bool bin = false) {
-        if (bin)
-            add_subtree_bin(now, father);
-        else {
-            F(now) = father;
-            S(father).push_back(now);
-        }
+    void add_subtree(TreeNode* now, TreeNode* father) {
+        F(now) = father;
+        S(father).push_back(now);
     }
 };
 
 Tree *trees, base;
 
-void buildRandomTree(Tree &t, int n, bool bin) {
+void buildRandomTree(Tree &t, int n) {
     t.add_node();
     for (int i = 1; i < n; i++) {
         TreeNode* now;
@@ -145,17 +123,13 @@ void buildRandomTree(Tree &t, int n, bool bin) {
     for (auto now : t.nodes) {
         if (S(now).size() == 0)
             L(now) = label++;
-        else if (!bin && F(now) != NULL && Frand() < r)
+        else if (F(now) != NULL && Frand() < r)
             t.remove_node(now);
     }
 
 }
 
 void cloneTree(Tree &t, TreeNode* clone, TreeNode* now = NULL) {
-    // cout << clone->nid << '\n' << "sons ";
-    // for (auto c : S(clone))
-    //     cout << c->nid << ' ';
-    // cout << '\n';
     if (now == NULL) {
         now = t.add_node();
         L(now) = L(clone);
@@ -168,43 +142,46 @@ void cloneTree(Tree &t, TreeNode* clone, TreeNode* now = NULL) {
 }
 
 void mutation(Tree &t, bool bin = false) {
-    if (Lrand() % 2 == 0 && !bin) {
-        for (int i = 0; i < 5; i++) {
-            TreeNode *now = t.at(Lrand() % t.nodes.size());
-            if (L(now) == -1 && F(now) != NULL && !now->removed) {
-                t.remove_node(now);
-                return;
+    vector<TreeNode*> ancestor;
+    for (int i = 0; i < 5; i++) {
+        TreeNode *u = t.at(inter[Lrand() % inter.size()]);
+        TreeNode *v = t.at(inter[Lrand() % inter.size()]);
+        if (u->removed || v->removed)
+            cout << "ERROR\n";
+        if (u!=v && F(u) != NULL) {
+            TreeNode* f = v;
+            while (f != u && f != NULL)
+                f = F(f);
+            if (f == u) {
+                f = u; u = v; v = f;
             }
-        }
-    } else {
-        vector<TreeNode*> ancestor;
-        for (int i = 0; i < 5; i++) {
-            TreeNode *now = t.at(Lrand() % t.nodes.size());
-            if (!now->removed && F(now) != NULL && F(F(now)) != NULL) {
-                TreeNode* f = t.remove_subtree(now);
-                ancestor.clear();
-                while (f != NULL && ancestor.size() < 5) {
-                    ancestor.push_back(f);
-                    f = F(f);
-                }
-                t.add_subtree(now, ancestor[Lrand()%ancestor.size()], bin);
-                return;
-            }
+            t.remove_subtree(u);
+            t.add_subtree(u, v);
+            return;
         }
     }
 }
 
 string printTree(TreeNode* now) {
+
     if (L(now) > -1)
         return to_string(L(now)+1);
 
-    string s = "(";
+    string s = "", res;
+    bool brc = false;
     for (auto son : S(now)) {
-        if (s.length() > 1)
-            s += ',';
-        s += printTree(son);
+        res = printTree(son);
+        if (res.length() > 0) {
+            if (s.length() > 0) {
+                s += ',';
+                brc = true;
+            }
+            s += res;
+        }
     }
-    s += ')';
+    if (brc) s = "("+s+")";
+
+    if (dbg) cout << now->nid << '\t' << s << endl;
     return s;
 }
 
@@ -212,6 +189,7 @@ string printTree(TreeNode* now) {
 
 int main(int argc, char **argv) {
     int seed = time(0);
+    // int seed = 42;
     srand(seed);
     readArg(argc, argv);
 
@@ -220,20 +198,21 @@ int main(int argc, char **argv) {
     ofstream fout(out_file);
 
     if (sim) {
-        buildRandomTree(base, n, bin);
+        buildRandomTree(base, n);
         for (int ti = 0; ti < k; ti++) {
             cloneTree(trees[ti], base.root);
+            inter.clear();
+            for (auto node: trees[ti].nodes)
+                if (!node->removed && F(node)!=NULL && node->label==-1)
+                    inter.push_back(node->nid);
             for (int i = 0; i < m; i++)
-                mutation(trees[ti], bin);
+                mutation(trees[ti]);
+            fout << printTree(trees[ti].root) << '\n';
         }
-    } else {
+    } else
         for (int ti = 0; ti < k; ti++) {
-            buildRandomTree(trees[ti], n, bin);
+            buildRandomTree(trees[ti], n);
+            fout << printTree(trees[ti].root) << '\n';
         }
-    }
-    // fout << n << '\n';
-    for (int ti = 0; ti < k; ti++)
-        fout << printTree(trees[ti].root) << '\n';
-    // cout << seed << '\n';
     return 0;
 }

@@ -11,7 +11,7 @@ else: path = "~/boost_1_55_0/"
 f = open("log.txt", 'a')
 f.write("loop: {}\n".format(loop))
 
-os.system("g++ databuilder.cpp -o EXEC_exp")
+os.system("g++ databuilder_paper.cpp -o EXEC_exp")
 os.system("g++ main_new.cpp -I {} -o EXEC_new".format(path))
 os.system("g++ main_old.cpp -I {} -o EXEC_old".format(path))
 
