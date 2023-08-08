@@ -24,7 +24,7 @@ void readArg(int argc, char **argv) {
         return ;
     int t_opt;
     m = -1; r = 0.2;
-    while ((t_opt = getopt(argc, argv, "bn:r:m:k:o:d") ) != -1)
+    while ((t_opt = getopt(argc, argv, "n:r:m:k:o:d") ) != -1)
         switch (t_opt)
         {
             case 'n':
