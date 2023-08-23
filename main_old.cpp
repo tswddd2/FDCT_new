@@ -21,6 +21,16 @@ using namespace std::chrono;
 
 using namespace std;
 
+bool readArg(int argc, char **argv) {
+    if (argc == 1)
+        return false;
+    int t_opt;
+    while ((t_opt = getopt(argc, argv, "k") ) != -1)
+        if(t_opt == 'k')
+            return true;
+    return false;
+}
+
 int main(int argc, char** argv) {
 
 	#ifdef LOCAL_TEST
@@ -31,6 +41,8 @@ int main(int argc, char** argv) {
 
 	ifstream fin("inp.txt");
 	vector<Tree*> trees = parse_nex_short(fin);
+
+    bool alg_choice = readArg(argc, argv);
 
 	#else
 
@@ -43,7 +55,9 @@ int main(int argc, char** argv) {
 	string algo(argv[1]);
 	ifstream fin(argv[2]);
 	vector<Tree*> trees = parse_nex(fin);
-	
+
+    bool alg_choice = false;
+
 	#endif
 
 
@@ -55,7 +69,7 @@ int main(int argc, char** argv) {
 	// {
 		if (algo == "freq") {
 			// consensus = freqdiff(trees, Tree::get_taxas_num() > 1000);
-			consensus = freqdiff(trees);
+			consensus = freqdiff(alg_choice, trees);
 		} else if (algo == "minrlc_exact") {
 			consensus = minRLC_exact(trees);
 		} else if (algo == "minilc_exact") {
@@ -79,7 +93,7 @@ int main(int argc, char** argv) {
 	if (consensus == NULL) {
 		std::cout << "No valid consensus found." << std::endl;
 	} else {
-		freopen("oup2.txt", "w", stdout);
+        alg_choice ? freopen("oup3.txt", "w", stdout) : freopen("oup2.txt", "w", stdout);
 		cout << consensus->to_newick() << endl;
 		fclose(stdout);
 	}

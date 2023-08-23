@@ -742,7 +742,7 @@ void merge_trees(Tree* tree1, Tree* tree2, taxas_ranges_t* t1_tr, lca_t* t2_lcas
 	delete t2_tr;
 }
 
-Tree* freqdiff(std::vector<Tree*>& trees, bool centroid_paths = true) {
+Tree* freqdiff(bool alg_choice, std::vector<Tree*>& trees, bool centroid_paths = true) {
 
 	start = new int[Tree::get_taxas_num()*2];
 	stop = new int[Tree::get_taxas_num()*2];
@@ -776,6 +776,11 @@ Tree* freqdiff(std::vector<Tree*>& trees, bool centroid_paths = true) {
 	// weights[i][node id] = weights of cluster of node (with node id) in tree i
 	// initialize leaves and roots to "number of trees" because trivial clusters will have that value
 	//calc_w_k2n(trees);
+    auto st = Now();
+
+    if(alg_choice)
+        calc_w_k2n(trees);
+
 	for (size_t i = 0; i < trees.size(); i++) {
 		for (size_t j = 0; j < trees[i]->get_nodes_num(); j++) {
 			Tree::Node* node = trees[i]->get_node(j);
@@ -786,8 +791,9 @@ Tree* freqdiff(std::vector<Tree*>& trees, bool centroid_paths = true) {
 		trees[i]->reorder();
 	}
 
-	auto st = Now();
-	calc_w_kn2(trees);
+	if(!alg_choice)
+        calc_w_kn2(trees);
+    
 	auto ed = Now();
 	cout << duration_sec(st, ed) << endl;
 

@@ -41,7 +41,7 @@ void readArg(int argc, char **argv) {
                 sim = false;         break;
         }
     if (m == -1 && sim)
-        m = max(20, n/20);
+        m = n/20;
 }
 
 struct TreeNode
